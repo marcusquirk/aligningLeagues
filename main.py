@@ -13,7 +13,7 @@ RIGHT = 1
 BOTTOM = 0
 TOP = 1
 NUM_POINTS = 30
-ANGLE = 3.15
+ANGLE = math.inf
 
 loaded = False
 fileName = input("Choose set of points file: ")
@@ -45,6 +45,8 @@ def drawLines(x, y):
 dividingLines = divideLines(x, y, ANGLE)
 
 dividingLines = sorted(dividingLines, key = lambda elem: elem[2])
+
+print(distance.distance((y[0],x[0]),(y[1],x[1])))
 
 print("The number of points is", NUM_POINTS)
 print("The number of dividing lines is", int(NUM_POINTS * (NUM_POINTS - 1) / 2))
