@@ -10,32 +10,27 @@ def getSides(line, x, y, names):
         y - the y-values of the points
         names - the associated names of each point"""
 
+    i_line = line[0][0]
+    j_line = line[0][1]
+
+    linePoints = [(x[i_line],y[i_line]),(x[j_line],y[j_line])]
 
     left = []
-    right = []
-    middle = []
+    right = [[linePoints[0][::-1], names[i_line]], [linePoints[1][::-1], names[j_line]]]
 
-    vector = tupleSubtract(line[1], line[0])
+    vector = tupleSubtract(linePoints[1],linePoints[0])
+
     for i in range(len(x)):
-        point = (x[i], y[i])
-        vector2 = tupleSubtract(point, line[0])
-        crossProduct = np.cross(vector, vector2)
-        if crossProduct > 0.000001:
-            # Points are reversed so they can be passed as lat/long to the distance function
-            left.append([point[::-1], names[i]])
-        elif crossProduct < -0.000001:
-            right.append([point[::-1], names[i]])
-        else:
-            middle.append([point[::-1], names[i]])
 
-    counter = 0
-    while len(right) < len(x) // 2:
-        right.append(middle[counter])
-        counter += 1
-    while len(left) < len(x) // 2:
-        left.append(middle[counter])
-        counter += 1
-    if counter < len(middle):
-        left.append(middle[counter])
+        if i != i_line and i != j_line:
+            point = (x[i], y[i])
+            vector2 = tupleSubtract(point, linePoints[0])
+            crossProduct = np.cross(vector, vector2)
+            if crossProduct > 0:
+                # Points are reversed so they can be passed as lat/long to the distance function
+                left.append([point[::-1], names[i]])
+            else:
+                right.append([point[::-1], names[i]])
+
 
     return left, right
