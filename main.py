@@ -34,24 +34,26 @@ except:
     names = [i for i in range(NUM_POINTS)]
     limits = extent
 
+if loaded:
+    showPoints(plt, x, y, limits, loaded, extent, backgroundMap)
+else:
+    showPoints(plt, x, y, limits)
+
 dividingLines = findLines(x, y, ANGLE)
 
 print("The number of points is", NUM_POINTS)
 print("The number of dividing lines is", int(NUM_POINTS * (NUM_POINTS - 1) / 2))
 print("The number of equal dividing lines with angle less than", ANGLE, "is", len(dividingLines))
 
-if loaded: showPoints(plt, x, y, limits, loaded, extent, backgroundMap)
-else: showPoints(plt,x,y,limits,loaded)
-
-lines = findBestLines(numSolutions, dividingLines, x, y, (games[0], games[2]), names)
+conferences = findBestLines(numSolutions, dividingLines, x, y, (games[0], games[2]), names)
 
 if loaded:
-    for line in lines:
+    for line in conferences:
         sets = getSides(line, x, y, names)
-        estimateTravel(([sets[0]], [sets[1]]), games)
+        print("Configuration distance:", estimateTravel(([sets[0]], [sets[1]]), games))
         visualiseSets(sets, limits, loaded, extent, backgroundMap)
 else:
-    for line in lines:
+    for line in conferences:
         sets = getSides(line, x, y, names)
         estimateTravel(([sets[0]], [sets[1]]), games)
         visualiseSets(sets, limits)

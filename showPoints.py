@@ -1,4 +1,4 @@
-def showPoints(plt, x, y, limits, loaded, extent=None, backgroundMap=None):
+def showPoints(plt, x, y, limits, loaded=False, extent=None, backgroundMap=None):
     fig, ax = plt.subplots()
     plt.scatter(x, y)
     if loaded:

@@ -20,5 +20,4 @@ def estimateTravel(sets, games):
                                 my_distance += distance(thisDiv[i][0], otherDiv[j][0]).miles*games[2]
                 #print(thisDiv[i][1], my_distance)
                 totalDistance += my_distance
-    print(totalDistance)
     return(totalDistance)
