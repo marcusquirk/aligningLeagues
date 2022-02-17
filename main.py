@@ -13,7 +13,8 @@ numSolutions = 5
 extent = [0,1,0,1]
 NUM_POINTS = 41
 ANGLE = math.inf
-games = [1.85714286, 1.85714286, 1]
+struct = [2,3]
+games = [2, 1.8, 1]
 
 loaded = False
 fileName = input("Choose set of points file: ")
@@ -34,27 +35,60 @@ except:
     names = [i for i in range(NUM_POINTS)]
     limits = extent
 
+sizes = [NUM_POINTS//struct[0], NUM_POINTS//struct[0]//struct[1]]
+
 if loaded:
     showPoints(plt, x, y, limits, loaded, extent, backgroundMap)
 else:
     showPoints(plt, x, y, limits)
 
-dividingLines = findLines(x, y, ANGLE)
+confLines = findLines(x, y, ANGLE, NUM_POINTS//struct[0])
 
 print("The number of points is", NUM_POINTS)
 print("The number of dividing lines is", int(NUM_POINTS * (NUM_POINTS - 1) / 2))
-print("The number of equal dividing lines with angle less than", ANGLE, "is", len(dividingLines))
+print("The number of equal dividing lines with angle less than", ANGLE, "is", len(confLines))
 
-conferences = findBestLines(numSolutions, dividingLines, x, y, (games[0], games[2]), names)
+conferences = findBestLines(numSolutions, confLines, x, y)
+visualiseSets(getSides(conferences[0],x,y),limits,loaded, extent, backgroundMap)
+
+for line in conferences:
+    sets = getSides(line,x,y)
+    for set in sets:
+        confX = []
+        confY = []
+        for team in set:
+            confX.append(team[1])
+            confY.append(team[0])
+        divLines1 = findLines(confX, confY, size=sizes[1])
+        for line in divLines1:
+            print(confX)
+            divs = getSides(line, confX, confY)
+            for div in divs:
+                if len(div) == sizes[1]:
+                    finalDivs = [div]
+                    print(finalDivs)
+                else:
+                    divX = []
+                    divY = []
+                    for team in div:
+                        divX.append(team[1])
+                        divY.append(team[0])
+            divLine2 = findBestLines(1,findLines(divX, divY, size=sizes[1]), divX, divY)[0]
+            toBeAppended = getSides(divLine2, divX, divY)
+            finalDivs.append(toBeAppended[0])
+            finalDivs.append(toBeAppended[1])
+            visualiseSets(finalDivs, limits, loaded, extent, backgroundMap)
+        #divisions = findBestLines(numSolutions, divLines, confX, confY, names)
 
 if loaded:
     for line in conferences:
-        sets = getSides(line, x, y, names)
+        sets = getSides(line, x, y)
         print("Configuration distance:", estimateTravel(([sets[0]], [sets[1]]), games))
+        print(sets)
         visualiseSets(sets, limits, loaded, extent, backgroundMap)
 else:
     for line in conferences:
-        sets = getSides(line, x, y, names)
+        sets = getSides(line, x, y)
         estimateTravel(([sets[0]], [sets[1]]), games)
         visualiseSets(sets, limits)
 
