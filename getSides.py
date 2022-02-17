@@ -32,5 +32,4 @@ def getSides(line, x, y, names):
             else:
                 right.append([point[::-1], names[i]])
 
-
     return left, right

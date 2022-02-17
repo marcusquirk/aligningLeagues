@@ -1,18 +1,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from findConvexHull import findConvexHull
+from estimateTravel import estimateTravel
 from findLines import findLines
-from tupleSubtract import tupleSubtract
 import math
 from csv import reader
-from findBestLine import findBestLine
+from findBestLines import findBestLines
 from showPoints import showPoints
-from geopy import distance
+from visualiseSets import visualiseSets
+from getSides import getSides
 
+numSolutions = 5
 extent = [0,1,0,1]
-NUM_POINTS = 13
+NUM_POINTS = 41
 ANGLE = math.inf
-gamesStructure = [3.71,2]
+games = [1.85714286, 1.85714286, 1]
 
 loaded = False
 fileName = input("Choose set of points file: ")
@@ -33,16 +34,7 @@ except:
     names = [i for i in range(NUM_POINTS)]
     limits = extent
 
-def drawLines(x, y):
-    dividingLines = findLines(x, y, ANGLE)
-    for line in dividingLines:
-        plt.plot([line[0][0], line[1][0]], [line[0][1],line[1][1]], linewidth=0.5)
-
-#drawLines(x,y)
-
 dividingLines = findLines(x, y, ANGLE)
-
-#dividingLines = sorted(dividingLines, key = lambda elem: elem[1])
 
 print("The number of points is", NUM_POINTS)
 print("The number of dividing lines is", int(NUM_POINTS * (NUM_POINTS - 1) / 2))
@@ -51,7 +43,16 @@ print("The number of equal dividing lines with angle less than", ANGLE, "is", le
 if loaded: showPoints(plt, x, y, limits, loaded, extent, backgroundMap)
 else: showPoints(plt,x,y,limits,loaded)
 
+lines = findBestLines(numSolutions, dividingLines, x, y, (games[0], games[2]), names)
+
 if loaded:
-    findBestLine(dividingLines, plt, x, y, limits, loaded, gamesStructure, names, extent, backgroundMap)
+    for line in lines:
+        sets = getSides(line, x, y, names)
+        estimateTravel(([sets[0]], [sets[1]]), games)
+        visualiseSets(sets, limits, loaded, extent, backgroundMap)
 else:
-    findBestLine(dividingLines, plt, x, y, limits, loaded, gamesStructure, names, extent, names)
+    for line in lines:
+        sets = getSides(line, x, y, names)
+        estimateTravel(([sets[0]], [sets[1]]), games)
+        visualiseSets(sets, limits)
+

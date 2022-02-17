@@ -6,7 +6,6 @@ import math
 def findLines(points_x, points_y, angle, size=None):
     if not size:
         size = len(points_x)//2
-    print(size)
     numPoints = len(points_x)
     listOfLines = []
     for i in range(numPoints):
