@@ -8,14 +8,14 @@ import math
 def visualiseSets(sets, limits, loaded=False, extent=None, backgroundMap=None, colour=u'#1f77b4'):
     fig, ax = plt.subplots()
     #plt.plot([line[0][0], line[1][0]], [line[0][1], line[1][1]], linewidth=0.5)
-
-    for points in sets:
+    for set in sets:
         x = []
         y = []
-        for i in points:
+        for team in set:
             # Reverse the points back to x-y from lat/long
-            x.append(i[0][1])
-            y.append(i[0][0])
+            print(team)
+            x.append(team[1])
+            y.append(team[0])
         plt.scatter(x, y, color=colour)
         edges = findConvexHull(x, y)
         plt.plot(edges[0], edges[1], color=colour)

@@ -2,12 +2,12 @@ import math
 from getSides import getSides
 from subsetDistance import subsetDistance
 
-def findBestLines(num, dividingLines, x, y, games, names):
+def findBestLines(num, dividingLines, x, y):
     lines = []
 
     for line in dividingLines:
-        left, right = getSides(line, x, y, names)
-        thisDistance = subsetDistance((left, right), games)
+        left, right = getSides(line, x, y)
+        thisDistance = subsetDistance((left, right))
         lines.append([line, thisDistance])
 
     lines = sorted(lines, key=lambda elem: elem[1])

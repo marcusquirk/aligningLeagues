@@ -2,7 +2,7 @@ from tupleSubtract import tupleSubtract
 import numpy as np
 
 
-def getSides(line, x, y, names):
+def getSides(line, x, y):
     """returns the subsets of points from a dividing line
     Parameters:
         line - the dividing line
@@ -12,24 +12,22 @@ def getSides(line, x, y, names):
 
     i_line = line[0][0]
     j_line = line[0][1]
-
     linePoints = [(x[i_line],y[i_line]),(x[j_line],y[j_line])]
 
     left = []
-    right = [[linePoints[0][::-1], names[i_line]], [linePoints[1][::-1], names[j_line]]]
-
+    right = [linePoints[0][::-1], linePoints[1][::-1]]
     vector = tupleSubtract(linePoints[1],linePoints[0])
 
     for i in range(len(x)):
-
         if i != i_line and i != j_line:
             point = (x[i], y[i])
             vector2 = tupleSubtract(point, linePoints[0])
             crossProduct = np.cross(vector, vector2)
             if crossProduct > 0:
                 # Points are reversed so they can be passed as lat/long to the distance function
-                left.append([point[::-1], names[i]])
+                left.append(point[::-1])
             else:
-                right.append([point[::-1], names[i]])
-
-    return left, right
+                right.append(point[::-1])
+    print(left)
+    print(right)
+    return [left, right]
