@@ -1,17 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from estimateTravel import estimateTravel
+from findBestDiv import findBestDiv
 from findLines import findLines
 import math
 from csv import reader
-from findBestLines import findBestLines
+from findBestConf import findBestConf
 from showPoints import showPoints
 from visualiseSets import visualiseSets
 from getSides import getSides
 
-numSolutions = 5
+numSolutions = 1
 extent = [0,1,0,1]
-NUM_POINTS = 41
+NUM_POINTS = 29
 ANGLE = math.inf
 struct = [2,3]
 games = [2, 1.8, 1]
@@ -48,20 +49,31 @@ print("The number of points is", NUM_POINTS)
 print("The number of dividing lines is", int(NUM_POINTS * (NUM_POINTS - 1) / 2))
 print("The number of equal dividing lines with angle less than", ANGLE, "is", len(confLines))
 
-conferences = findBestLines(numSolutions, confLines, x, y)
-visualiseSets(getSides(conferences[0],x,y),limits,loaded, extent, backgroundMap)
+confLines = findBestConf(numSolutions, confLines, x, y)
+#visualiseSets(getSides(conferences[0],x,y),limits,loaded, extent, backgroundMap)
 
-for line in conferences:
+bestArrangements = []
+for conferences in confLines:
+    thisArrangement = []
+    for side in getSides(conferences, x, y):
+        thisArrangement += [findBestDiv(1, side, sizes[1])]
+    print(len(thisArrangement))
+    bestArrangements += [thisArrangement]
+
+print(len(bestArrangements))
+if loaded:
+    for arrangement in bestArrangements:
+        print(estimateTravel(arrangement, games))
+        #print("Configuration distance:", estimateTravel(arrangement, games))
+        visualiseSets(arrangement, limits, loaded, extent, backgroundMap)
+
+'''for line in conferences:
     sets = getSides(line,x,y)
     for set in sets:
-        confX = []
-        confY = []
-        for team in set:
-            confX.append(team[1])
-            confY.append(team[0])
+        confX = [team[1] for team in set]
+        confY = [team[0] for team in set]
         divLines1 = findLines(confX, confY, size=sizes[1])
         for line in divLines1:
-            print(confX)
             divs = getSides(line, confX, confY)
             for div in divs:
                 if len(div) == sizes[1]:
@@ -73,22 +85,25 @@ for line in conferences:
                     for team in div:
                         divX.append(team[1])
                         divY.append(team[0])
-            divLine2 = findBestLines(1,findLines(divX, divY, size=sizes[1]), divX, divY)[0]
-            toBeAppended = getSides(divLine2, divX, divY)
-            finalDivs.append(toBeAppended[0])
-            finalDivs.append(toBeAppended[1])
+            divLine2 = findBestConf(1, findLines(divX, divY, size=sizes[1]), divX, divY)[0]
+            otherDivs = getSides(divLine2, divX, divY)
+            finalDivs += otherDivs
+            print(finalDivs)
+            print(finalDivs)
             visualiseSets(finalDivs, limits, loaded, extent, backgroundMap)
-        #divisions = findBestLines(numSolutions, divLines, confX, confY, names)
+        #divisions = findBestLines(numSolutions, divLines, confX, confY, names)'''
 
-if loaded:
-    for line in conferences:
+'''if loaded:
+    for line in confLines:
         sets = getSides(line, x, y)
-        print("Configuration distance:", estimateTravel(([sets[0]], [sets[1]]), games))
         print(sets)
+        print((sets[0], sets[1]))
+        print("Configuration distance:", estimateTravel(([sets[0]], [sets[1]]), games))
         visualiseSets(sets, limits, loaded, extent, backgroundMap)
 else:
-    for line in conferences:
+    for line in confLines:
         sets = getSides(line, x, y)
+        print("Configuration distance:", estimateTravel(([sets[0]], [sets[1]]), games))
         estimateTravel(([sets[0]], [sets[1]]), games)
-        visualiseSets(sets, limits)
+        visualiseSets(sets, limits)'''
 
