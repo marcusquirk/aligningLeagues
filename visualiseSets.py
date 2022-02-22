@@ -10,7 +10,6 @@ def visualiseSets(sets, limits, loaded=False, extent=None, backgroundMap=None, c
             # Reverse the points back to x-y from lat/long
             x = [team[1] for team in divs]
             y = [team[0] for team in divs]
-
             plt.scatter(x, y, color=colour)
             edges = findConvexHull(x, y)
             plt.plot(edges[0], edges[1], color=colour)
