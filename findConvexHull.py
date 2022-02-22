@@ -4,6 +4,8 @@ from findAngles import findAngles
 from tupleSubtract import tupleSubtract
 
 def findConvexHull(points_x, points_y):
+    if len(points_x) == 2:
+        return(points_x, points_y)
     NUM_POINTS = len(points_x)
     lowest_point_y = min(points_y)
     lowest_point_x = min(points_x)
