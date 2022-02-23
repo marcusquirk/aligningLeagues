@@ -10,11 +10,11 @@ from showPoints import showPoints
 from visualiseSets import visualiseSets
 from getSides import getSides
 
-numSolutions = 5
+numSolutions = 50
 extent = [0,1,0,1]
-NUM_POINTS = 29
+NUM_POINTS = 12
 ANGLE = math.inf
-struct = [2,1]
+struct = [2,2]
 games = [2, 1.8, 1]
 
 loaded = False
@@ -37,7 +37,6 @@ except:
     limits = extent
 
 sizes = [NUM_POINTS//struct[0], NUM_POINTS//struct[0]//struct[1]]
-print(sizes)
 
 if loaded:
     showPoints(plt, x, y, limits, loaded, extent, backgroundMap)
@@ -45,7 +44,6 @@ else:
     showPoints(plt, x, y, limits)
 
 confLines = findLines(x, y, ANGLE, NUM_POINTS//struct[0])
-
 print("The number of points is", NUM_POINTS)
 print("The number of dividing lines is", int(NUM_POINTS * (NUM_POINTS - 1) / 2))
 print("The number of equal dividing lines with angle less than", ANGLE, "is", len(confLines))
@@ -55,20 +53,39 @@ if struct[0] == 2:
     #visualiseSets(getSides(conferences[0],x,y),limits,loaded, extent, backgroundMap)
 
     bestArrangements = []
-
     if struct[1] > 0:
+        k = 0
         for conferences in confLines:
-            thisArrangement = []
+            arrangements = []
             for side in getSides(conferences, x, y):
-                print(side)
-                thisArrangement += [findBestDiv(1, side, sizes[1])]
-            bestArrangements += [thisArrangement]
+                arrangements += [findBestDiv(numSolutions, side, sizes[1])]
+            bestArrangements += [arrangements]
+        arrangementDistances = []
+        for line in bestArrangements:
+            for conference in line:
+                for arrangement in conference:
+                    print(k,'/',len(conference) * len(line) * len(bestArrangements))
+                    k+=1
+                    for otherConference in line:
+                        if otherConference != conference:
+                            for otherArrangement in otherConference:
+                                thisArrangement = [arrangement] + [otherArrangement]
+                                thisArrangement = [[thisArrangement, estimateTravel(thisArrangement, games)]]
+                                arrangementDistances += thisArrangement
+        arrangements = sorted(arrangementDistances, key=lambda elem: elem[-1])
+        i = 0
+        while i < len(arrangements) - 1:
+            if math.isclose(arrangements[i][-1], arrangements[i + 1][-1], rel_tol=0.0001):
+                arrangements.remove(arrangements[i])
+            else:
+                i += 1
+        arrangements = arrangements[:numSolutions]
 
-        if loaded:
-            for arrangement in bestArrangements:
-                print("League Travel:", estimateTravel(arrangement, games))
-                # print("Configuration distance:", estimateTravel(arrangement, games))
-                visualiseSets(arrangement, limits, loaded, extent, backgroundMap)
+        for arrangement in arrangements:
+            print("League Travel:", arrangement.pop())
+            if loaded: visualiseSets(arrangement[0], limits, loaded, extent, backgroundMap)
+            else: visualiseSets(arrangement[0], limits, loaded, extent)
+
 
 else:
     points = [(y[i], x[i]) for i in range(NUM_POINTS)]
