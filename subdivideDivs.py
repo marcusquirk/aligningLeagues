@@ -1,13 +1,14 @@
 from findLines import findLines
 from getSides import getSides
-
+import math
+from subsetDistance import subsetDistance
 
 def subdivideDivs(sides, size):
     count = 0
     arrangements = []
     divs = []
     for side in sides:
-        if len(side) <= size + 1:
+        if len(side) == size:
             divs += [side]
             count += 1
         else:
@@ -17,9 +18,13 @@ def subdivideDivs(sides, size):
 
     if count == len(sides):
         return sides
-
+    minimum = math.inf
     for line in lines:
         newSides = getSides(line, x, y)
-        arrangements += divs + subdivideDivs(newSides, size)
+        arrangement = divs + subdivideDivs(newSides, size)
+        distance = subsetDistance((arrangement))
+        if distance < minimum:
+            minimum = distance
+            arrangements = arrangement
 
     return arrangements
